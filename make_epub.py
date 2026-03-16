@@ -91,7 +91,7 @@ h1 {{
 </head>
 <body>
 
-<h1>{title}</h1>
+<h1 id="song{i}">{title}</h1>
 
 <p>{lyrics}</p>
 
