@@ -17,6 +17,7 @@ songs = []
 def format_lyrics(text):
 
     lines = []
+    in_chorus = False
 
     for line in text.split("\n"):
 
@@ -24,25 +25,35 @@ def format_lyrics(text):
             num = re.findall(r"\d+", line)
             num = num[0] if num else ""
             lines.append(f"\n<b>Zwrotka {num}</b>")
+            in_chorus = False
 
         elif line.startswith("[C"):
-            lines.append("\n<b>Refren</b>")
+            lines.append('\n<div class="chorus"><b>Refren</b><br>')
+            in_chorus = True
 
         elif line.startswith("["):
+
+            # zamknij refren jeśli był
+            if in_chorus:
+                lines.append("</div>")
+                in_chorus = False
             continue
 
         else:
             lines.append(line)
 
+    if in_chorus:
+        lines.append("</div>")
+
     return "<br>".join(lines)
 
 
+# 📥 Wczytaj pieśni
 for file in sorted(os.listdir(".")):
 
     if os.path.isfile(file):
 
         try:
-
             tree = ET.parse(file)
             root = tree.getroot()
 
@@ -59,13 +70,18 @@ for file in sorted(os.listdir(".")):
 
 toc = ""
 
+# 📖 Generuj pieśni
 for i, (title, lyrics) in enumerate(songs, 1):
 
     filename = f"song{i}.html"
     anchor = f"song{i}"
 
-    # 🔥 TOC wskazuje konkretnie na anchor
     toc += f'<li><a href="{filename}#{anchor}">{title}</a></li>\n'
+
+    if i == 1:
+        pagebreak = "auto"
+    else:
+        pagebreak = "always"
 
     with open(f"{BOOKDIR}/{filename}", "w", encoding="utf8") as f:
 
@@ -81,11 +97,20 @@ body {{
     font-family: serif;
     line-height: 1.6;
     font-size: 1.2em;
-    margin: 2em;
+    margin: 0;
+    padding: 1em;
 }}
 
 h1 {{
     font-size: 1.6em;
+    margin-top: 0;
+    page-break-before: {pagebreak};
+}}
+
+.chorus {{
+    border-left: 4px solid #888;
+    padding-left: 0.6em;
+    margin: 0.6em 0;
 }}
 
 </style>
@@ -103,6 +128,7 @@ h1 {{
 """)
 
 
+# 📑 Strona główna
 with open(f"{BOOKDIR}/index.html", "w", encoding="utf8") as f:
 
     f.write(f"""
@@ -115,19 +141,43 @@ with open(f"{BOOKDIR}/index.html", "w", encoding="utf8") as f:
 
 body {{
     font-family: serif;
-    margin: 2em;
+    margin: 1em;
 }}
 
 li {{
     margin-bottom: 0.3em;
 }}
 
+input {{
+    font-size: 1em;
+    padding: 0.3em;
+}}
+
+button {{
+    font-size: 1em;
+    padding: 0.3em;
+}}
+
 </style>
+
+<script>
+function goToSong() {{
+    var num = document.getElementById("songnum").value;
+    if (num) {{
+        window.location.href = "song" + num + ".html#song" + num;
+    }}
+}}
+</script>
 
 </head>
 <body>
 
 <h1>Śpiewnik Pielgrzyma</h1>
+
+<h2>Idź do numeru pieśni</h2>
+
+<input id="songnum" type="number" placeholder="np. 355">
+<button onclick="goToSong()">Idź</button>
 
 <h2>Spis treści</h2>
 
