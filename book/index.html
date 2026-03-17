@@ -8,19 +8,43 @@
 
 body {
     font-family: serif;
-    margin: 2em;
+    margin: 1em;
 }
 
 li {
     margin-bottom: 0.3em;
 }
 
+input {
+    font-size: 1em;
+    padding: 0.3em;
+}
+
+button {
+    font-size: 1em;
+    padding: 0.3em;
+}
+
 </style>
+
+<script>
+function goToSong() {
+    var num = document.getElementById("songnum").value;
+    if (num) {
+        window.location.href = "song" + num + ".html#song" + num;
+    }
+}
+</script>
 
 </head>
 <body>
 
 <h1>Śpiewnik Pielgrzyma</h1>
+
+<h2>Idź do numeru pieśni</h2>
+
+<input id="songnum" type="number" placeholder="np. 355">
+<button onclick="goToSong()">Idź</button>
 
 <h2>Spis treści</h2>
 
