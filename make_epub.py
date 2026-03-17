@@ -62,8 +62,10 @@ toc = ""
 for i, (title, lyrics) in enumerate(songs, 1):
 
     filename = f"song{i}.html"
+    anchor = f"song{i}"
 
-    toc += f'<li><a href="{filename}">{title}</a></li>\n'
+    # 🔥 TOC wskazuje konkretnie na anchor
+    toc += f'<li><a href="{filename}#{anchor}">{title}</a></li>\n'
 
     with open(f"{BOOKDIR}/{filename}", "w", encoding="utf8") as f:
 
@@ -91,7 +93,8 @@ h1 {{
 </head>
 <body>
 
-<h1 id="song{i}">{title}</h1>
+<a id="{anchor}"></a>
+<h1>{title}</h1>
 
 <p>{lyrics}</p>
 
